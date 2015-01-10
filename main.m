@@ -19,21 +19,39 @@ void printUsage() {
     printf("folder's images.\n\n");
 
     printf("Usage: %s -assets <xcassets file path>\n", processName.UTF8String);
-    printf("       %s -out <output file path> \n\n", [@"" stringByPaddingToLength:processName.length
+    printf("       %s -out <output file path> \n", [@"" stringByPaddingToLength:processName.length
                                                                      withString:@" "
                                                                 startingAtIndex:0].UTF8String);
+
+    printf("       %s -prefix <string> \n", [@"" stringByPaddingToLength:processName.length
+                                                              withString:@" "
+                                                         startingAtIndex:0].UTF8String);
+
+    printf("       %s -suffix <string> \n\n", [@"" stringByPaddingToLength:processName.length
+                                                                withString:@" "
+                                                           startingAtIndex:0].UTF8String);
 
     printf("  -assets  The path to a valid .xcassets folder.\n\n");
 
     printf("  -out      The path to write the output header file to. Missing\n");
     printf("            directories will be created along the way. If a file\n");
     printf("            already exists at the given path, it will be\n");
-    printf("            overwritten.");
+    printf("            overwritten.\n\n");
+
+    printf("  -prefix   A string to prefix the generated symbol names with.\n\n");
+
+    printf("  -suffix   A string to append to generated symbol names.");
 
     printf("\n\n");
 }
 
 #pragma mark - Main
+
+NSString *sanitisedSymbolStringForString(NSString *string) {
+    if (string == nil) { return @""; }
+    NSCharacterSet *unwantedThings = [NSCharacterSet characterSetWithCharactersInString:@"\t\n -/"];
+    return [[string componentsSeparatedByCharactersInSet:unwantedThings] componentsJoinedByString:@""];
+}
 
 int main(int argc, const char * argv[])
 {
@@ -42,6 +60,8 @@ int main(int argc, const char * argv[])
 
         NSString *inputFilePath = [[NSUserDefaults standardUserDefaults] valueForKey:@"assets"];
         NSString *outputFilePath = [[NSUserDefaults standardUserDefaults] valueForKey:@"out"];
+        NSString *namePrefix = sanitisedSymbolStringForString([[NSUserDefaults standardUserDefaults] valueForKey:@"prefix"]);
+        NSString *nameSuffix = sanitisedSymbolStringForString([[NSUserDefaults standardUserDefaults] valueForKey:@"suffix"]);
 
         setbuf(stdout, NULL);
 
@@ -81,7 +101,7 @@ int main(int argc, const char * argv[])
         [fileContents appendString:@"#import <Foundation/Foundation.h>\n\n"];
 
         for (NSString *name in names) {
-            [fileContents appendString:[NSString stringWithFormat:@"static NSString * const %@ = @\"%@\";\n", name, name]];
+            [fileContents appendString:[NSString stringWithFormat:@"static NSString * const %@%@%@ = @\"%@\";\n", namePrefix, name, nameSuffix, name]];
         }
 
         NSError *error = nil;

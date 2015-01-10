@@ -18,7 +18,7 @@ found [here](https://github.com/iKenndac/generate-imageasset-symbols/blob/master
 
 ## Usage ##
 
-`$ generate-imageasset-symbols -assets <path to .xcassets folder> -out <output path>`
+`$ generate-imageasset-symbols -assets <path to .xcassets folder> -out <output path> [-prefix <string>] [-suffix <string>]`
 
   * `-assets`  The path to a valid .xcassets folder.
 
@@ -27,3 +27,6 @@ found [here](https://github.com/iKenndac/generate-imageasset-symbols/blob/master
     already exists at the given path, it will be
     overwritten.
 
+  * `-prefix` A string to prefix the generated symbol names with.
+
+  * `-suffix` A string to append to generated symbol names.
