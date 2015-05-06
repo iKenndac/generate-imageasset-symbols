@@ -83,7 +83,7 @@ int main(int argc, const char * argv[])
 
         for (NSString *name in enumerator) {
             if ([name.pathExtension isEqualToString:@"imageset"]) {
-                [names addObject:name.stringByDeletingPathExtension];
+                [names addObject:name.lastPathComponent.stringByDeletingPathExtension];
                 [enumerator skipDescendants];
             }
         }
